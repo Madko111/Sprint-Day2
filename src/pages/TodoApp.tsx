@@ -1,4 +1,5 @@
-import { useState, useEffect, FormEvent } from 'react'
+import { useState, useEffect } from 'react'
+import type { FormEvent } from 'react'
 import { supabase } from '../lib/supabase'
 import type { Todo } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
@@ -12,7 +13,7 @@ import '../index.css'
 
 type Filter = 'all' | 'active' | 'completed'
 type Priority = 'low' | 'med' | 'high'
-type SortBy = 'created' | 'due_date'
+type SortBy = 'created' | 'due'
 type Tab = 'tasks' | 'analytics'
 
 export function TodoApp() {
@@ -177,7 +178,7 @@ export function TodoApp() {
     })
     .filter(t => priorityFilter === 'all' || t.priority === priorityFilter)
     .sort((a, b) => {
-      if (sortBy === 'due_date') {
+      if (sortBy === 'due') {
         if (!a.due_date) return 1
         if (!b.due_date) return -1
         return new Date(a.due_date).getTime() - new Date(b.due_date).getTime()
@@ -187,14 +188,6 @@ export function TodoApp() {
 
   const activeCount = todos.filter(t => !t.completed).length
   const completedCount = todos.filter(t => t.completed).length
-
-  const getPriorityLabel = (priority: Priority) => {
-    switch (priority) {
-      case 'high': return 'High'
-      case 'med': return 'Medium'
-      case 'low': return 'Low'
-    }
-  }
 
   if (loading) {
     return (
